@@ -7,7 +7,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import Lasso
 from sklearn.linear_model import Ridge
 from sklearn.preprocessing import PolynomialFeatures
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold
+from sklearn.metrics import mean_squared_error
 from sklearn.dummy import DummyRegressor
 
 # Data details: listings has totally 75 columns.
@@ -83,26 +84,38 @@ def linear_model(x_train, y_train, x_test, y_test) -> LinearRegression:
     return model
 
 
-def lasso_model(x_train, y_train, x_test, y_test) -> Lasso:
-    model = Lasso()
-    model.fit(x_train, y_train)
-    print('Lasso Regression:')
-    print('Slopes:', model.coef_)
-    print('Intercept:', model.intercept_)
-    print('Accuracy:', model.score(x_test, y_test))
-    print()
-    return model
+def lasso_model(x, y):
+    mean_error = []
+    std_error = []
+    c_range = [0.0001, 0.001, 0.01, 0.1, 1, 2]
+    for c in c_range:
+        model_c = Lasso(alpha=1 / (2 * c))
+        temp = []
+        kf = KFold(n_splits=5, shuffle=True)
+        for train, test in kf.split(x):
+            # TODO: Something wrong with the type of x and y, this is not the way of acquiring data
+            model_c.fit(x[train], y[train])
+            y_pred = model_c.predict(x[test])
+            temp.append(mean_squared_error(y[test], y_pred))
+        mean_error.append(np.array(temp).mean())
+        std_error.append(np.array(temp).std())
+    plt.figure()
+    plt.errorbar(c_range, mean_error, yerr=std_error)
+    plt.xlabel('Ci')
+    plt.ylabel('Mean square error')
+    plt.show()
 
 
 def main():
     x, y = pre_process()
     # draw_origin_data(y)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
-    linear_model(x_train, y_train, x_test, y_test)
+    # linear_model(x_train, y_train, x_test, y_test)
+    lasso_model(x, y)
 
     dummy = DummyRegressor(strategy='median')
     dummy.fit(x_train, y_train)
-    print('Baseline score: ', dummy.score(x_test, y_test))
+    print('Baseline score:', dummy.score(x_test, y_test))
 
 
 if __name__ == '__main__':
