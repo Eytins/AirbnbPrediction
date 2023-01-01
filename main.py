@@ -28,7 +28,7 @@ def read_data() -> DataFrame:
 
 
 def draw_origin_data(y):
-    plt.hist(y, bins=50)
+    plt.hist(y, bins=500)
     plt.xlabel('Score')
     plt.ylabel('Times')
     plt.show()
@@ -108,14 +108,14 @@ def lasso_model(x, y):
 
 def main():
     x, y = pre_process()
-    # draw_origin_data(y)
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
+    draw_origin_data(y)
+    # x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
     # linear_model(x_train, y_train, x_test, y_test)
-    lasso_model(x, y)
-
-    dummy = DummyRegressor(strategy='median')
-    dummy.fit(x_train, y_train)
-    print('Baseline score:', dummy.score(x_test, y_test))
+    # lasso_model(x, y)
+    #
+    # dummy = DummyRegressor(strategy='median')
+    # dummy.fit(x_train, y_train)
+    # print('Baseline score:', dummy.score(x_test, y_test))
 
 
 if __name__ == '__main__':
