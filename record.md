@@ -7,8 +7,8 @@ cut:
 [](](]
 
 
-## property_type / bathrooms_text
+## Fixed: property_type / bathrooms_text
 Amount less than 100 replace to others, or not?
 
-## amenities
+## Fixed: amenities
 The same procedure with reviews
