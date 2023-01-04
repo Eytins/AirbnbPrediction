@@ -44,3 +44,7 @@ Compared to the Linear regression above, Lasso regression is a type of linear re
 
 Ridge
 
+
+
+
+review_scores_rating
